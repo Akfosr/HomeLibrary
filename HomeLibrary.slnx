@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Models/">
+    <File Path="Book.cs" />
+  </Folder>
+  <Folder Name="/Services/">
+    <File Path="LibraryService.cs" />
+  </Folder>
+  <Project Path="HomeLibrary/HomeLibrary.csproj" />
+</Solution>

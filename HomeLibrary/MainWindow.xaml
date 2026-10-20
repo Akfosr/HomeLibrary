@@ -1,0 +1,186 @@
+﻿<Window x:Class="HomeLibrary.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="📚 Домашняя библиотека"
+        Height="640" Width="1050"
+        Background="{StaticResource BgBrush}"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="14">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="340"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ЛЕВАЯ ПАНЕЛЬ: форма -->
+        <Border Grid.Column="0"
+                Background="{StaticResource PanelBrush}"
+                CornerRadius="10"
+                Padding="16"
+                Margin="0,0,10,0">
+            <Border.Effect>
+                <DropShadowEffect Color="#000000" Opacity="0.06"
+                                  BlurRadius="12" ShadowDepth="2"/>
+            </Border.Effect>
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="Новая книга"
+                               FontSize="20" FontWeight="Bold"
+                               Foreground="{StaticResource AccentBrush}"
+                               Margin="0,0,0,12"/>
+
+                    <TextBlock Text="Автор:"/>
+                    <TextBox x:Name="TxtAuthor"/>
+
+                    <TextBlock Text="Название:" Margin="0,8,0,0"/>
+                    <TextBox x:Name="TxtTitle"/>
+
+                    <TextBlock Text="Год:" Margin="0,8,0,0"/>
+                    <TextBox x:Name="TxtYear"/>
+
+                    <TextBlock Text="Жанр:" Margin="0,8,0,0"/>
+                    <TextBox x:Name="TxtGenre"/>
+
+                    <TextBlock Text="Статус:" Margin="0,8,0,0"/>
+                    <ComboBox x:Name="CmbStatus" SelectedIndex="0">
+                        <ComboBoxItem>Хочу прочитать</ComboBoxItem>
+                        <ComboBoxItem>Читаю</ComboBoxItem>
+                        <ComboBoxItem>Прочитано</ComboBoxItem>
+                    </ComboBox>
+
+                    <CheckBox x:Name="ChkFav" Content="★ Избранное"
+                              Margin="0,10,0,0" FontWeight="SemiBold"/>
+
+                    <Button Content="➕ Добавить" Click="BtnAdd_Click"/>
+                    <Button Content="💾 Сохранить изменения" Click="BtnEdit_Click"/>
+                    <Button Content="🗑 Удалить"
+                            Background="#E74C3C" Click="BtnDelete_Click"/>
+                    <Button Content="🧹 Очистить форму"
+                            Background="#95A5A6" Click="BtnClear_Click"/>
+
+                    <Separator Margin="0,14"/>
+
+                    <Border Background="{StaticResource AccentLight}"
+                            CornerRadius="8" Padding="12">
+                        <StackPanel>
+                            <TextBlock Text="📊 Статистика"
+                                       FontWeight="Bold"
+                                       Foreground="{StaticResource AccentBrush}"/>
+                            <TextBlock x:Name="TxtStats"
+                                       TextWrapping="Wrap"
+                                       Margin="0,6,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- ПРАВАЯ ПАНЕЛЬ: список -->
+        <Border Grid.Column="1"
+                Background="{StaticResource PanelBrush}"
+                CornerRadius="10"
+                Padding="16">
+            <Border.Effect>
+                <DropShadowEffect Color="#000000" Opacity="0.06"
+                                  BlurRadius="12" ShadowDepth="2"/>
+            </Border.Effect>
+
+            <DockPanel>
+                <!-- Панель инструментов -->
+                <StackPanel DockPanel.Dock="Top"
+                            Orientation="Horizontal"
+                            Margin="0,0,0,10">
+                    <TextBlock Text="🔎 Поиск:"
+                               VerticalAlignment="Center"
+                               FontWeight="SemiBold"/>
+                    <TextBox x:Name="TxtSearch" Width="180" Margin="6,0,0,0"
+                             TextChanged="Filter_Changed"/>
+
+                    <TextBlock Text="Фильтр:" Margin="12,0,0,0"
+                               VerticalAlignment="Center"
+                               FontWeight="SemiBold"/>
+                    <ComboBox x:Name="CmbFilter" Width="160" SelectedIndex="0"
+                              Margin="6,0,0,0"
+                              SelectionChanged="Filter_Changed">
+                        <ComboBoxItem>Все</ComboBoxItem>
+                        <ComboBoxItem>Хочу прочитать</ComboBoxItem>
+                        <ComboBoxItem>Читаю</ComboBoxItem>
+                        <ComboBoxItem>Прочитано</ComboBoxItem>
+                        <ComboBoxItem>Только избранное</ComboBoxItem>
+                    </ComboBox>
+
+                    <TextBlock Text="Сортировка:" Margin="12,0,0,0"
+                               VerticalAlignment="Center"
+                               FontWeight="SemiBold"/>
+                    <ComboBox x:Name="CmbSort" Width="150" SelectedIndex="0"
+                              Margin="6,0,0,0"
+                              SelectionChanged="Filter_Changed">
+                        <ComboBoxItem>По автору</ComboBoxItem>
+                        <ComboBoxItem>По названию</ComboBoxItem>
+                        <ComboBoxItem>По году</ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+
+                <!-- Таблица -->
+                <DataGrid x:Name="GridBooks"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          HeadersVisibility="Column"
+                          CanUserAddRows="False"
+                          SelectionMode="Single"
+                          SelectionChanged="Grid_SelectionChanged">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Автор"    Binding="{Binding Author}" Width="150"/>
+                        <DataGridTextColumn Header="Название" Binding="{Binding Title}"  Width="220"/>
+                        <DataGridTextColumn Header="Год"      Binding="{Binding Year}"   Width="70"/>
+                        <DataGridTextColumn Header="Жанр"     Binding="{Binding Genre}"  Width="130"/>
+
+                        <!-- Статус с цветной плашкой -->
+                        <DataGridTemplateColumn Header="Статус" Width="140">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border CornerRadius="10" Padding="8,2"
+                                            HorizontalAlignment="Left"
+                                            Background="{Binding StatusColor}">
+                                        <TextBlock Text="{Binding StatusText}"
+                                                   Foreground="White"
+                                                   FontWeight="SemiBold"
+                                                   FontSize="12"/>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <!-- Избранное -->
+                        <DataGridTemplateColumn Header="★" Width="50">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="★"
+                                               FontSize="18"
+                                               HorizontalAlignment="Center"
+                                               Foreground="#F5B301"
+                                               Visibility="{Binding FavVisibility}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+
+                    <!-- Подсветка строк -->
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsFavorite}" Value="True">
+                                    <Setter Property="Background" Value="#E6F1FB"/>
+                                </DataTrigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="#C9E0F5"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+                </DataGrid>
+            </DockPanel>
+        </Border>
+    </Grid>
+</Window>
